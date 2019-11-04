@@ -32,7 +32,7 @@ create table "PLAYLISTS" (
 ) inherits ("BASE");
 
 create table "RULES" (
-	"PROPERTY_ID" varchar(255) not null,
+	"PROPERTY_ID" integer not null,
     "ID_COMPARATOR" integer not null
 ) inherits ("BASE");
 
