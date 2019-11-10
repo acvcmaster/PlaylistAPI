@@ -2,9 +2,9 @@ using PlaylistAPI.Models;
 
 namespace PlaylistAPI.Business
 {
-    public class UserBusiness : BaseBusiness<User>
+    public class SongBusiness : BaseBusiness<Song>
     {
-        public UserBusiness() : base(null)
+        public SongBusiness() : base(null)
         {
         }
     }
