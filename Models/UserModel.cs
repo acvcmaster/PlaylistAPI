@@ -6,13 +6,13 @@ namespace PlaylistAPI.Models
     [Table("USERS")]
     public class User : BaseModel
     {
-        [Column("NAME"), Required]
+        [Column("NAME"), Required, StringLength(255)]
         public string Name { get; set; }
 
-        [Column("EMAIL")]
+        [Column("EMAIL"), StringLength(255)]
         public string Email { get; set; }
 
-        [Column("PASSWORD"), Required]
+        [Column("PASSWORD"), Required, StringLength(255)]
         public string Password { get; set; }
     }
 }
