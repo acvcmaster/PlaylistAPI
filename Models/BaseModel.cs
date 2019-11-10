@@ -1,14 +1,21 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlaylistAPI.Models
 {
     public class BaseModel
     {
-        [Key]
+        [Key, Column("ID")]
         public int Id { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? Modified { get; set; }
+        
+        [Column("CREATION")]
+        public DateTime Creation { get; set; }
+
+        [Column("LAST_MODIFICATION")]
+        public DateTime? LastModification { get; set; }
+
+        [Column("ACTIVE")]
         public bool Active { get; set; }
     }
 }

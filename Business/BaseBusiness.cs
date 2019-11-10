@@ -5,16 +5,16 @@ namespace PlaylistAPI.Business
 {
     public class BaseBusiness<TModel> where TModel : BaseModel
     {
-        private readonly PlaylistContext context;
+        private PlaylistContext _context;
 
         public BaseBusiness(PlaylistContext context)
         {
-            this.context = context;
+            this._context = context;
         }
 
         public TModel Get(int id)
         {
-            var dbSet = context.ArquireDbSet<TModel>();
+            var dbSet = _context.ArquireDbSet<TModel>();
             if (dbSet != null)
             {
                 return dbSet.Where(item => item.Id == id && item.Active).FirstOrDefault();
@@ -24,13 +24,14 @@ namespace PlaylistAPI.Business
 
         public TModel Insert(TModel model)
         {
-            var dbSet = context.ArquireDbSet<TModel>();
+            var dbSet = _context.ArquireDbSet<TModel>();
             if (dbSet != null)
             {
                 try
                 {
+                    model.Active = true;
                     dbSet.Add(model);
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     return model;
                 }
                 catch { return null; }
@@ -40,13 +41,13 @@ namespace PlaylistAPI.Business
 
         public TModel Update(TModel model)
         {
-            var dbSet = context.ArquireDbSet<TModel>();
+            var dbSet = _context.ArquireDbSet<TModel>();
             if (dbSet != null)
             {
                 try
                 {
                     dbSet.Update(model);
-                    context.SaveChanges();
+                    _context.SaveChanges();
                     return model;
                 }
                 catch { return null; }
@@ -56,7 +57,7 @@ namespace PlaylistAPI.Business
 
         public TModel Delete(int id)
         {
-            var dbSet = context.ArquireDbSet<TModel>();
+            var dbSet = _context.ArquireDbSet<TModel>();
             if (dbSet != null)
             {
                 try
@@ -76,7 +77,7 @@ namespace PlaylistAPI.Business
 
         public TModel Recover(int id)
         {
-            var dbSet = context.ArquireDbSet<TModel>();
+            var dbSet = _context.ArquireDbSet<TModel>();
             if (dbSet != null)
             {
                 try
@@ -92,6 +93,11 @@ namespace PlaylistAPI.Business
                 catch { return null; }
             }
             return null;
+        }
+
+        public void SetContext(PlaylistContext context)
+        {
+            _context = context;
         }
     }
 }
