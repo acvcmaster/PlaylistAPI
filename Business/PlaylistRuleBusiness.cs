@@ -9,7 +9,7 @@ namespace PlaylistAPI.Business
         {
         }
 
-        public IQueryable<object> GetPlaylistRules(int id)
+        public IQueryable<PlaylistRuleCompleteModel> GetPlaylistRules(int id)
         {
             var playlistRuleSet = Context.ArquireDbSet<PlaylistRule>();
             var ruleSet = Context.ArquireDbSet<Rule>();
