@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using PlaylistAPI.Services;
 
 namespace PlaylistAPI
 {
@@ -25,7 +28,25 @@ namespace PlaylistAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors((options) =>
+            {
+                options.AddPolicy("allow-all", (builder) =>
+                {
+                    builder.WithOrigins("*");
+                });
+            });
+
             services.AddControllers();
+            services.AddEntityFrameworkNpgsql().AddDbContext<PlaylistContext>(opt =>
+                opt.UseNpgsql(Configuration.GetConnectionString("PlaylistConnection")));
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Playlist API", Version = "v1" });
+            });
+
+            services.AddSingleton<ICryptographyService, CryptographyService>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +59,11 @@ namespace PlaylistAPI
 
             app.UseHttpsRedirection();
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Playlist API");
+            });
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -46,6 +72,8 @@ namespace PlaylistAPI
             {
                 endpoints.MapControllers();
             });
+
+            app.UseCors("allow-all");
         }
     }
 }
