@@ -37,6 +37,9 @@ namespace PlaylistAPI.Controllers
         [HttpPost]
         public virtual IActionResult Insert([FromBody]TModel model)
         {
+            if (!ModelState.IsValid)
+                return ValidationProblem();
+
             var result = _business.Insert(model);
             if (result != null)
                 return Ok(result);
@@ -46,6 +49,9 @@ namespace PlaylistAPI.Controllers
         [HttpPut]
         public virtual IActionResult Update([FromBody]TModel model)
         {
+            if (!ModelState.IsValid)
+                return ValidationProblem();
+
             var result = _business.Update(model);
             if (result != null)
                 return Ok(result);
