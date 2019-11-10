@@ -37,107 +37,107 @@ insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (14, 'is afte
 -- Default values for RULES
 
 -- ARTIST
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (1, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (1, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (1, 7);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (1, 8);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (1, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (1, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (1, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (1, 8);
 
 -- ALBUM_ARTIST
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (2, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (2, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (2, 7);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (2, 8);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (2, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (2, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (2, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (2, 8);
 
 -- BIT RATE
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (3, 1);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (3, 2);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (3, 3);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (3, 4);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (3, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (3, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (3, 1);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (3, 2);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (3, 3);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (3, 4);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (3, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (3, 6);
 
 -- CATEGORY
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (4, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (4, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (4, 7);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (4, 8);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (4, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (4, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (4, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (4, 8);
 
 -- COMPOSER
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (5, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (5, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (5, 7);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (5, 8);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (5, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (5, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (5, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (5, 8);
 
 -- DATE_ADDED
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (6, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (6, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (6, 13);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (6, 14);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (6, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (6, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (6, 13);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (6, 14);
 
 -- DATE_MODIFIED
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (7, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (7, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (7, 13);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (7, 14);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (7, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (7, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (7, 13);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (7, 14);
 
 -- DESCRIPTION
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (8, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (8, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (8, 7);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (8, 8);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (8, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (8, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (8, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (8, 8);
 
 -- DISC_NUMBER
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (9, 1);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (9, 2);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (9, 3);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (9, 4);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (9, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (9, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (9, 1);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (9, 2);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (9, 3);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (9, 4);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (9, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (9, 6);
 
 -- GENRE
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (10, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (10, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (10, 7);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (10, 8);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (10, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (10, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (10, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (10, 8);
 
 -- HAS_ARTWORK
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (11, 11);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (11, 12);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (11, 11);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (11, 12);
 
 -- GENRE
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (12, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (12, 6);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (12, 7);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (12, 8);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (12, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (12, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (12, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (12, 8);
 
 -- SAMPLE_RATE
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (13, 1);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (13, 2);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (13, 3);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (13, 4);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (13, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (13, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (13, 1);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (13, 2);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (13, 3);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (13, 4);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (13, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (13, 6);
 
 -- SIZE
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (14, 1);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (14, 2);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (14, 3);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (14, 4);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (14, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (14, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (14, 1);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (14, 2);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (14, 3);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (14, 4);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (14, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (14, 6);
 
 -- TRACK_NUMBER
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (15, 1);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (15, 2);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (15, 3);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (15, 4);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (15, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (15, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (15, 1);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (15, 2);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (15, 3);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (15, 4);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (15, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (15, 6);
 
 -- YEAR
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (16, 1);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (16, 2);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (16, 3);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (16, 4);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (16, 5);
-insert into "RULES" ("PROPERTY_ID", "ID_COMPARATOR") values (16, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (16, 1);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (16, 2);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (16, 3);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (16, 4);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (16, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (16, 6);
