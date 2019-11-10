@@ -52,7 +52,7 @@ create table "PLAYLISTS" (
 	"LAST_MODIFICATION" timestamp null,
 	"ACTIVE" boolean not null,
 	"NAME" varchar(255) not null,
-	"OWNER_ID" integer not null references "USERS"("ID"),
+	"OWNER_ID" integer not null references "USERS"("ID") on delete cascade,
     "IS_SMART" boolean not null
 );
 
@@ -61,8 +61,8 @@ create table "RULES" (
 	"CREATION" timestamp not null,
 	"LAST_MODIFICATION" timestamp null,
 	"ACTIVE" boolean not null,
-	"PROPERTY_ID" integer not null references "PROPERTIES"("ID"),
-    "COMPARATOR_ID" integer not null references "COMPARATORS"("ID")
+	"PROPERTY_ID" integer not null references "PROPERTIES"("ID") on delete cascade,
+    "COMPARATOR_ID" integer not null references "COMPARATORS"("ID") on delete cascade
 );
 
 create table "SONG_PROPERTIES" (
@@ -71,7 +71,7 @@ create table "SONG_PROPERTIES" (
 	"LAST_MODIFICATION" timestamp null,
 	"ACTIVE" boolean not null,
 	"NAME" varchar(255) not null,
-    "SONG_ID" integer not null references "SONGS"("ID"),
+    "SONG_ID" integer not null references "SONGS"("ID") on delete cascade,
     "VALUE" varchar
 );
 
@@ -80,7 +80,7 @@ create table "PLAYLIST_RULES" (
 	"CREATION" timestamp not null,
 	"LAST_MODIFICATION" timestamp null,
 	"ACTIVE" boolean not null,
-    "PLAYLIST_ID" integer not null references "PLAYLISTS"("ID"),
-    "RULE_ID" integer not null references "RULES"("ID"),
+    "PLAYLIST_ID" integer not null references "PLAYLISTS"("ID") on delete cascade,
+    "RULE_ID" integer not null references "RULES"("ID") on delete cascade,
     "DATA" varchar null
 );
