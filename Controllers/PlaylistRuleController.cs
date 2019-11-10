@@ -5,11 +5,10 @@ using PlaylistAPI.Models;
 namespace PlaylistAPI.Controllers
 {
     [Route("[controller]/[action]")]
-    public class PlaylistRuleController : BaseController<PlaylistRule>
+    public class PlaylistRuleController : BaseController<PlaylistRule, PlaylistRuleBusiness>
     {
         public PlaylistRuleController(PlaylistContext context) : base(context)
         {
-            this.AcquireBusiness<PlaylistRuleBusiness>();
         }
     }
 }

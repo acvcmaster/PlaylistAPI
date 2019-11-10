@@ -14,5 +14,8 @@ namespace PlaylistAPI.Models
 
         [Column("IS_SMART"), Required]
         public bool IsSmart { get; set; }
+
+        [Column("DISJUNCTIVE_RULES"), Required]
+        public bool DisjunctiveRules { get; set; }
     }
 }

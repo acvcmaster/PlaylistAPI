@@ -5,20 +5,18 @@ using PlaylistAPI.Models;
 namespace PlaylistAPI.Controllers
 {
     [ApiController]
-    public abstract class BaseController<TModel> : ControllerBase where TModel : BaseModel
+    public abstract class BaseController<TModel, TBusiness> : ControllerBase
+        where TModel : BaseModel
+        where TBusiness : BaseBusiness<TModel>, new()
     {
         private readonly PlaylistContext _context;
-        private BaseBusiness<TModel> _business;
+        public TBusiness Business { get; set; }
 
         public BaseController(PlaylistContext context)
         {
             this._context = context;
-        }
-
-        public void AcquireBusiness<TBusiness>() where TBusiness : BaseBusiness<TModel>, new()
-        {
-            _business = new TBusiness();
-            _business.SetContext(_context);
+            Business = new TBusiness();
+            Business.Context = _context;
         }
 
         [HttpGet]
@@ -26,7 +24,7 @@ namespace PlaylistAPI.Controllers
         {
             try
             {
-                var result = _business.Get(id);
+                var result = Business.Get(id);
                 if (result != null)
                     return Ok(result);
                 return NoContent();
@@ -40,7 +38,7 @@ namespace PlaylistAPI.Controllers
             if (!ModelState.IsValid)
                 return ValidationProblem();
 
-            var result = _business.Insert(model);
+            var result = Business.Insert(model);
             if (result != null)
                 return Ok(result);
             return BadRequest($"Could not insert {typeof(TModel).Name} on database.");
@@ -52,7 +50,7 @@ namespace PlaylistAPI.Controllers
             if (!ModelState.IsValid)
                 return ValidationProblem();
 
-            var result = _business.Update(model);
+            var result = Business.Update(model);
             if (result != null)
                 return Ok(result);
             return BadRequest($"Could not update {typeof(TModel).Name} on database.");
@@ -61,7 +59,7 @@ namespace PlaylistAPI.Controllers
         [HttpDelete]
         public virtual IActionResult Delete([FromQuery]int id)
         {
-            var result = _business.Delete(id);
+            var result = Business.Delete(id);
             if (result != null)
                 return Ok(result);
             return BadRequest($"Could not delete {typeof(TModel).Name} from database.");
@@ -70,7 +68,7 @@ namespace PlaylistAPI.Controllers
         [HttpPatch]
         public virtual IActionResult Recover([FromQuery] int id)
         {
-            var result = _business.Recover(id);
+            var result = Business.Recover(id);
             if (result != null)
                 return Ok(result);
             return BadRequest($"Could not recover {typeof(TModel).Name} from database.");

@@ -53,7 +53,8 @@ create table "PLAYLISTS" (
 	"ACTIVE" boolean not null,
 	"NAME" varchar(255) not null,
 	"OWNER_ID" integer not null references "USERS"("ID") on delete cascade,
-    "IS_SMART" boolean not null
+    "IS_SMART" boolean not null,
+	"DISJUNCTIVE_RULES" boolean not null
 );
 
 create table "RULES" (
