@@ -12,7 +12,7 @@ namespace PlaylistAPI.Business
             this.Context = context;
         }
 
-        public TModel Get(int id)
+        public virtual TModel Get(int id)
         {
             var dbSet = Context.ArquireDbSet<TModel>();
             if (dbSet != null)
@@ -22,7 +22,7 @@ namespace PlaylistAPI.Business
             return null;
         }
 
-        public TModel Insert(TModel model)
+        public virtual TModel Insert(TModel model)
         {
             var dbSet = Context.ArquireDbSet<TModel>();
             if (dbSet != null)
@@ -39,7 +39,7 @@ namespace PlaylistAPI.Business
             return null;
         }
 
-        public TModel Update(TModel model)
+        public virtual TModel Update(TModel model)
         {
             var dbSet = Context.ArquireDbSet<TModel>();
             if (dbSet != null)
@@ -55,7 +55,7 @@ namespace PlaylistAPI.Business
             return null;
         }
 
-        public TModel Delete(int id)
+        public virtual TModel Delete(int id)
         {
             var dbSet = Context.ArquireDbSet<TModel>();
             if (dbSet != null)
@@ -75,7 +75,7 @@ namespace PlaylistAPI.Business
             return null;
         }
 
-        public TModel Recover(int id)
+        public virtual TModel Recover(int id)
         {
             var dbSet = Context.ArquireDbSet<TModel>();
             if (dbSet != null)

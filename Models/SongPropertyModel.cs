@@ -6,8 +6,8 @@ namespace PlaylistAPI.Models
     [Table("SONG_PROPERTIES")]
     public class SongProperty : BaseModel
     {
-        [Column("NAME"), Required, StringLength(255)]
-        public string Name { get; set; }
+        [Column("PROPERTY_ID"), Required]
+        public int PropertyId { get; set; }
 
         [Column("SONG_ID"), Required]
         public int SongId { get; set; }

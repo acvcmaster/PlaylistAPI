@@ -71,7 +71,7 @@ create table "SONG_PROPERTIES" (
 	"CREATION" timestamp not null,
 	"LAST_MODIFICATION" timestamp null,
 	"ACTIVE" boolean not null,
-	"NAME" varchar(255) not null,
+	"PROPERTY_ID" integer not null references "PROPERTIES"("ID") on delete cascade,
     "SONG_ID" integer not null references "SONGS"("ID") on delete cascade,
     "VALUE" varchar
 );

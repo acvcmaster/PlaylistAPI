@@ -2,20 +2,21 @@
 
 insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (1, 'ALBUM', 'STRING');
 insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (2, 'ALBUM_ARTIST', 'STRING');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (3, 'BIT_RATE', 'INTEGER');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (4, 'CATEGORY', 'STRING');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (5, 'COMPOSER', 'STRING');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (6, 'DATE_ADDED', 'DATETIME');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (7, 'DATE_MODIFIED', 'DATETIME');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (8, 'DESCRIPTION', 'STRING');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (9, 'DISC_NUMBER', 'INTEGER');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (10, 'GENRE', 'STRING');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (11, 'HAS_ARTWORK', 'BOOLEAN');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (12, 'NAME', 'STRING');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (13, 'SAMPLE_RATE', 'INTEGER');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (14, 'SIZE', 'INTEGER');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (15, 'TRACK_NUMER', 'INTEGER');
-insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (16, 'YEAR', 'INTEGER');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (3, 'ARTIST', 'STRING');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (4, 'BIT_RATE', 'INTEGER');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (5, 'CATEGORY', 'STRING');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (6, 'COMPOSER', 'STRING');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (7, 'DATE_ADDED', 'DATETIME');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (8, 'DATE_MODIFIED', 'DATETIME');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (9, 'DESCRIPTION', 'STRING');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (10, 'DISC_NUMBER', 'INTEGER');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (11, 'GENRE', 'STRING');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (12, 'HAS_ARTWORK', 'BOOLEAN');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (13, 'NAME', 'STRING');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (14, 'SAMPLE_RATE', 'INTEGER');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (15, 'SIZE', 'INTEGER');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (16, 'TRACK_NUMER', 'INTEGER');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE") values (17, 'YEAR', 'INTEGER');
 
 -- Default values for COMPARATORS
 
