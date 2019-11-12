@@ -11,5 +11,8 @@ namespace PlaylistAPI.Models
 
         [Column("TYPE"), StringLength(25)]
         public string Type { get; set; }
+
+        [Column("DESCRIPTION")]
+        public string Description { get; set; }
     }
 }

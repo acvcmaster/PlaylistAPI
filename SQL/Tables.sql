@@ -43,7 +43,8 @@ create table "PROPERTIES" (
 	"LAST_MODIFICATION" timestamp null,
 	"ACTIVE" boolean not null,
     "NAME" varchar(255) not null,
-	"TYPE" varchar(25) not null
+	"TYPE" varchar(25) not null,
+	"DESCRIPTION" varchar null
 );
 
 create table "PLAYLISTS" (
