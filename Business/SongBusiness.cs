@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using PlaylistAPI.Models;
 
 namespace PlaylistAPI.Business
@@ -15,9 +18,9 @@ namespace PlaylistAPI.Business
         {
             Uri url;
             bool urlSuccess = Uri.TryCreate(model.Url, UriKind.Absolute, out url) && url.Scheme == Uri.UriSchemeFile;
+            var song = base.Insert(model);
             if (urlSuccess)
             {
-                var song = base.Insert(model);
                 if (song == null)
                     return null;
 
@@ -36,7 +39,12 @@ namespace PlaylistAPI.Business
                     Context.SaveChanges();
                     return song;
                 }
-                catch { return null; }
+                catch
+                {
+                    if (song != null)
+                        base.Delete(song.Id);
+                    return null;
+                }
             }
             return null;
         }
@@ -88,6 +96,58 @@ namespace PlaylistAPI.Business
                     break;
             }
             return result;
+        }
+
+        public CompleteSong GetFile(int id)
+        {
+            try
+            {
+                var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                var propertySet = Context.ArquireDbSet<Property>();
+                Song model = base.Get(id);
+
+                string contentType = new FileExtensionContentTypeProvider().TryGetContentType(model.Url, out contentType) ?
+                    contentType : "application/octet-stream";
+
+                CompleteSong result = new CompleteSong() { Song = model, Type = contentType, File = new StreamReader(model.Url).BaseStream };
+                return result;
+            }
+            catch { return null; }
+        }
+
+        public CompleteSong GetComplete(int id, HttpRequest request)
+        {
+            try
+            {
+                Song model = base.Get(id);
+
+                if (!File.Exists(model.Url))
+                    return null;
+
+                var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                var propertySet = Context.ArquireDbSet<Property>();
+
+                var properties = (from property in songPropertySet
+                    join p in propertySet on property.PropertyId equals p.Id
+                    where property.SongId == model.Id
+                    orderby property.Id
+                    select new CompleteSongProperty {
+                        Id = property.Id,
+                        Creation = property.Creation,
+                        LastModification = property.LastModification,
+                        Name = p.Name,
+                        Type = p.Type,
+                        Description = p.Description,
+                        Value = property.Value
+                    });
+
+                string contentType = new FileExtensionContentTypeProvider().TryGetContentType(model.Url, out contentType) ?
+                    contentType : "application/octet-stream";
+                
+                CompleteSong result = new CompleteSong() { Song = model, Type = contentType, RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={model.Id}", Properties = properties.ToList() };
+                return result;
+            }
+            catch { return null; }
         }
     }
 }

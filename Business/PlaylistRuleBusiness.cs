@@ -21,11 +21,13 @@ namespace PlaylistAPI.Business
                 join p in propertySet on r.PropertyId equals p.Id
                 join c in comparatorSet on r.ComparatorId equals c.Id
                 where rule.PlaylistId == id
+                orderby rule.Id
                 select new PlaylistRuleCompleteModel() {
                     Id = rule.Id,
                     Creation = rule.Creation,
                     LastModification = rule.LastModification,
                     Property = p.Name,
+                    PropertyDescription = p.Description,
                     PropertyType = p.Type,
                     Operator = c.Operator,
                     OperatorDescription = c.Description,
