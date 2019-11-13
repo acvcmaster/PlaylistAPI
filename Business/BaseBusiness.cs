@@ -17,7 +17,7 @@ namespace PlaylistAPI.Business
             var dbSet = Context.ArquireDbSet<TModel>();
             if (dbSet != null)
             {
-                return dbSet.Where(item => item.Id == id && item.Active).FirstOrDefault();
+                return dbSet.Where(item => item.Id == id).FirstOrDefault();
             }
             return null;
         }
@@ -29,7 +29,6 @@ namespace PlaylistAPI.Business
             {
                 try
                 {
-                    model.Active = true;
                     dbSet.Add(model);
                     Context.SaveChanges();
                     return model;
@@ -62,33 +61,14 @@ namespace PlaylistAPI.Business
             {
                 try
                 {
-                    var model = dbSet.Where(item => item.Id == id && item.Active).FirstOrDefault() as TModel;
+                    var model = dbSet.Where(item => item.Id == id).FirstOrDefault() as TModel;
                     if (model != null)
                     {
-                        model.Active = false;
-                        return Update(model);
+                        dbSet.Remove(model);
+                        Context.SaveChanges();
+                        return model;
                     }
                     else return null;
-                }
-                catch { return null; }
-            }
-            return null;
-        }
-
-        public virtual TModel Recover(int id)
-        {
-            var dbSet = Context.ArquireDbSet<TModel>();
-            if (dbSet != null)
-            {
-                try
-                {
-                    var model = dbSet.Where(item => item.Id == id).FirstOrDefault() as TModel;
-                    if (model != null && !model.Active)
-                    {
-                        model.Active = true;
-                        return Update(model);
-                    }
-                    return null;
                 }
                 catch { return null; }
             }

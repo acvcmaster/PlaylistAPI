@@ -26,7 +26,7 @@ namespace PlaylistAPI.Business
                     var file = TagLib.File.Create(song.Url);
                     var propertySet = Context.ArquireDbSet<Property>();
                     var songPropertySet = Context.ArquireDbSet<SongProperty>();
-                    var properties = (from item in propertySet where item.Active select item).ToList();
+                    var properties = (from item in propertySet select item).ToList();
                     var songProperties = new List<SongProperty>();
 
                     foreach (var property in properties)

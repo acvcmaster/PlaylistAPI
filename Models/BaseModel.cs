@@ -14,8 +14,5 @@ namespace PlaylistAPI.Models
 
         [Column("LAST_MODIFICATION")]
         public DateTime? LastModification { get; set; }
-
-        [Column("ACTIVE")]
-        public bool Active { get; set; }
     }
 }

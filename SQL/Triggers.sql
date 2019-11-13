@@ -4,7 +4,6 @@ create or replace function trigger_on_create()
 returns TRIGGER as $$
 begin
   new."CREATION" = now();
-  new."ACTIVE" = true;
   return new;
 end;
 $$ language plpgsql;

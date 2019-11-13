@@ -64,14 +64,5 @@ namespace PlaylistAPI.Controllers
                 return Ok(result);
             return BadRequest($"Could not delete {typeof(TModel).Name} from database.");
         }
-
-        [HttpPatch]
-        public virtual IActionResult Recover([FromQuery] int id)
-        {
-            var result = Business.Recover(id);
-            if (result != null)
-                return Ok(result);
-            return BadRequest($"Could not recover {typeof(TModel).Name} from database.");
-        }
     }
 }
