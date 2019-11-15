@@ -115,7 +115,7 @@ namespace PlaylistAPI.Business
             catch { return null; }
         }
 
-        public CompleteSong GetComplete(int id, HttpRequest request)
+        public CompleteSong GetCompleteSong(int id, HttpRequest request)
         {
             try
             {
@@ -138,6 +138,7 @@ namespace PlaylistAPI.Business
                         Name = p.Name,
                         Type = p.Type,
                         Description = p.Description,
+                        SongId = property.SongId,
                         Value = property.Value
                     });
 
@@ -146,6 +147,45 @@ namespace PlaylistAPI.Business
                 
                 CompleteSong result = new CompleteSong() { Song = model, Type = contentType, RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={model.Id}", Properties = properties.ToList() };
                 return result;
+            }
+            catch { return null; }
+        }
+
+        public IEnumerable<CompleteSong> GetCompleteSongs(IEnumerable<int> list, HttpRequest request)
+        {
+            try
+            {
+                var songSet = Context.ArquireDbSet<Song>();
+                var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                var propertySet = Context.ArquireDbSet<Property>();
+
+                var models = (from song in songSet where list.Contains(song.Id) select song).ToList();
+
+                var properties = (from property in songPropertySet
+                    join p in propertySet on property.PropertyId equals p.Id
+                    where list.Contains(property.SongId)
+                    orderby property.Id
+                    select new CompleteSongProperty {
+                        Id = property.Id,
+                        Creation = property.Creation,
+                        LastModification = property.LastModification,
+                        Name = p.Name,
+                        Type = p.Type,
+                        Description = p.Description,
+                        SongId = property.SongId,
+                        Value = property.Value
+                    }).ToList();
+
+                List<CompleteSong> completeSongs = new List<CompleteSong>();
+                foreach (var model in models)
+                {
+                    string contentType = new FileExtensionContentTypeProvider().TryGetContentType(model.Url, out contentType) ?
+                        contentType : "application/octet-stream";
+
+                    completeSongs.Add(new CompleteSong() { Song = model, Type = contentType,
+                        RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={model.Id}", Properties = properties.Where(item => item.SongId == model.Id)});
+                }
+                return completeSongs;
             }
             catch { return null; }
         }

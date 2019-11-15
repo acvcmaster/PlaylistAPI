@@ -10,7 +10,7 @@ namespace PlaylistAPI.Controllers
 
         public PlaylistController(PlaylistContext context) : base(context)
         {
-
+            Business.AddAuxiliraryBusiness<SongBusiness, Song>();
         }
 
         [HttpGet]
@@ -31,7 +31,7 @@ namespace PlaylistAPI.Controllers
         {
             try
             {
-                var result = Business.GetAllFromUser(id);
+                var result = Business.GetSongs(id, this.HttpContext.Request);
                 if (result != null)
                     return Ok(result);
                 return NoContent();
