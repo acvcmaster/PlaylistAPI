@@ -26,6 +26,7 @@ namespace PlaylistAPI.Business
                     Id = rule.Id,
                     Creation = rule.Creation,
                     LastModification = rule.LastModification,
+                    PropertyId = p.Id,
                     Property = p.Name,
                     PropertyDescription = p.Description,
                     PropertyType = p.Type,

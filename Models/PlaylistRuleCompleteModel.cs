@@ -2,6 +2,7 @@ namespace PlaylistAPI.Models
 {
     public class PlaylistRuleCompleteModel : BaseModel
     {
+        public int PropertyId { get; set; }
         public string Property { get; set; }
         public string PropertyDescription { get; set; }
         public string PropertyType { get; set; }

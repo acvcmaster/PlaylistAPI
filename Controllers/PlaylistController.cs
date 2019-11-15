@@ -10,7 +10,6 @@ namespace PlaylistAPI.Controllers
 
         public PlaylistController(PlaylistContext context) : base(context)
         {
-            Business.AddAuxiliraryBusiness<SongBusiness, Song>();
             Business.AddAuxiliraryBusiness<PlaylistRuleBusiness, PlaylistRule>();
         }
 
