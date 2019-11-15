@@ -21,6 +21,9 @@ namespace PlaylistAPI.Business
         public IEnumerable<CompleteSong> GetSongs(int id, HttpRequest request)
         {
             SongBusiness songBusiness = GetAuxiliraryBusiness<SongBusiness, Song>();
+            PlaylistRuleBusiness playlistRuleBusiness = GetAuxiliraryBusiness<PlaylistRuleBusiness, PlaylistRule>();
+
+            var playlistRules = playlistRuleBusiness.GetPlaylistRules(id);
             return null;
         }
     }
