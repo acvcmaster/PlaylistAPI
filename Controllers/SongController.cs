@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PlaylistAPI.Business;
 using PlaylistAPI.Models;
-using Newtonsoft.Json;
-using System.Collections.Generic;
 
 namespace PlaylistAPI.Controllers
 {
