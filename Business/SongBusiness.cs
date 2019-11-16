@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using PlaylistAPI.Models;
 
@@ -106,10 +105,27 @@ namespace PlaylistAPI.Business
                 var propertySet = Context.ArquireDbSet<Property>();
                 Song model = base.Get(id);
 
+                var properties = (from property in songPropertySet
+                                  join p in propertySet on property.PropertyId equals p.Id
+                                  orderby property.Id
+                                  where property.SongId == id && p.Name == "NAME"
+                                  select new CompleteSongProperty
+                                  {
+                                      Id = property.Id,
+                                      Creation = property.Creation,
+                                      LastModification = property.LastModification,
+                                      PropertyId = p.Id,
+                                      Name = p.Name,
+                                      Type = p.Type,
+                                      Description = p.Description,
+                                      SongId = property.SongId,
+                                      Value = property.Value
+                                  }).ToList();
+
                 string contentType = new FileExtensionContentTypeProvider().TryGetContentType(model.Url, out contentType) ?
                     contentType : "application/octet-stream";
 
-                CompleteSong result = new CompleteSong() { Song = model, Type = contentType, File = new StreamReader(model.Url).BaseStream };
+                CompleteSong result = new CompleteSong() { Song = model, Type = contentType, File = new StreamReader(model.Url).BaseStream, Properties = properties};
                 return result;
             }
             catch { return null; }

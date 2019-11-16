@@ -50,7 +50,7 @@ namespace PlaylistAPI.Controllers
                     return File(result.Data, "audio/x-mpegurl", result.Playlist.Name, true);
                 return NoContent();
             }
-            catch { return BadRequest($"Could not get songs by playlist id."); }
+            catch { return BadRequest($"Could not get playlist file by playlist id."); }
         }
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using PlaylistAPI.Business;
 using PlaylistAPI.Models;
@@ -18,7 +19,7 @@ namespace PlaylistAPI.Controllers
             var file = Business.GetFile(id);
             if (file != null)
             {
-                return File(file.File, file.Type, true);
+                return File(file.File, file.Type, file.Properties.FirstOrDefault().Value, true);
             }
             return NotFound("Could not get song file by id.");
         }

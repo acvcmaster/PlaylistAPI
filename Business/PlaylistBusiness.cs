@@ -77,6 +77,7 @@ namespace PlaylistAPI.Business
 
         public PlaylistFile GetPlaylistFile(int id, HttpRequest request)
         {
+            int playlistSongId = 1;
             try
             {
                 var basePlaylist = base.Get(id);
@@ -94,8 +95,9 @@ namespace PlaylistAPI.Business
                         Album = song.Properties.Where(item => item.Name == "ALBUM").FirstOrDefault().Value,
                         AlbumArtist = song.Properties.Where(item => item.Name == "ALBUM_ARTIST").FirstOrDefault().Value,
                         Path = song.RemoteUrl,
-                        Title = song.Properties.Where(item => item.Name == "NAME").FirstOrDefault().Value
+                        Title = $"{playlistSongId} - {song.Properties.Where(item => item.Name == "NAME").FirstOrDefault().Value}"
                     });
+                    playlistSongId++;
                 }
                 var playlistText = PlaylistToTextHelper.ToText(playlist);
                 var data = Encoding.Default.GetBytes(playlistText);
