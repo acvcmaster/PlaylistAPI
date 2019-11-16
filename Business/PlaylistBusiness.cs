@@ -94,7 +94,6 @@ namespace PlaylistAPI.Business
                         Album = song.Properties.Where(item => item.Name == "ALBUM").FirstOrDefault().Value,
                         AlbumArtist = song.Properties.Where(item => item.Name == "ALBUM_ARTIST").FirstOrDefault().Value,
                         Path = song.RemoteUrl,
-                        Duration = TimeSpan.FromSeconds(30),
                         Title = song.Song.Id.ToString()
                     });
                 }
