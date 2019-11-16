@@ -114,5 +114,45 @@ namespace PlaylistAPI.Business
             }
             catch { return null; }
         }
+
+        public IEnumerable<Song> MassInsert(string directoryUrl)
+        {
+            if (Directory.Exists(directoryUrl))
+            {
+                List<Song> insertedSongs = new List<Song>();
+                var files = Directory.GetFiles(directoryUrl);
+                foreach (var file in files)
+                {
+                    Song song = new Song() { Url = file };
+                    base.Insert(song);
+
+                    if (song == null)
+                        continue;
+
+                    try
+                    {
+                        var taglibFile = TagLib.File.Create(song.Url);
+                        var propertySet = Context.ArquireDbSet<Property>();
+                        var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                        var properties = (from item in propertySet select item).ToList();
+                        var songProperties = new List<SongProperty>();
+
+                        foreach (var property in properties)
+                            songProperties.Add(GetSongProperty(song, property, taglibFile));
+
+                        songPropertySet.AddRange(songProperties);
+                        insertedSongs.Add(song);
+                    }
+                    catch
+                    {
+                        if (song != null)
+                            base.Delete(song.Id);
+                    }
+                }
+                Context.SaveChanges();
+                return insertedSongs;
+            }
+            return null;
+        }
     }
 }

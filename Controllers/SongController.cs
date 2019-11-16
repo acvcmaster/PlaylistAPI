@@ -22,5 +22,14 @@ namespace PlaylistAPI.Controllers
             }
             return NotFound("Could not get song file by id.");
         }
+
+        [HttpPost]
+        public IActionResult MassInsert([FromQuery]string directoryUrl)
+        {
+            var result = Business.MassInsert(directoryUrl);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Failed to mass insert songs (directory exists?).");
+        }
     }
 }
