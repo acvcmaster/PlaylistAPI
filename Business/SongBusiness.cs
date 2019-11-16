@@ -83,7 +83,7 @@ namespace PlaylistAPI.Business
                     result.Value = file.Tag.FirstGenre;
                     break;
                 case "NAME":
-                    result.Value = file.Tag.Title;
+                    result.Value = file.Tag.Title != null ? file.Tag.Title : Path.GetFileNameWithoutExtension(file.Name);
                     break;
                 case "SAMPLE_RATE":
                     result.Value = file.Properties.AudioSampleRate.ToString();
