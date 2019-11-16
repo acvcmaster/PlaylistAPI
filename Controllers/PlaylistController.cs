@@ -15,7 +15,7 @@ namespace PlaylistAPI.Controllers
         }
 
         [HttpGet]
-        public virtual IActionResult GetAllFromUser([FromQuery]int id)
+        public IActionResult GetAllFromUser([FromQuery]int id)
         {
             try
             {
@@ -28,13 +28,26 @@ namespace PlaylistAPI.Controllers
         }
 
         [HttpGet]
-        public virtual IActionResult GetSongs([FromQuery]int id)
+        public IActionResult GetSongs([FromQuery]int id)
         {
             try
             {
                 var result = Business.GetSongs(id, this.HttpContext.Request);
                 if (result != null)
                     return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
+                return NoContent();
+            }
+            catch { return BadRequest($"Could not get songs by playlist id."); }
+        }
+
+        [HttpGet]
+        public IActionResult GetPlaylistFile([FromQuery]int id)
+        {
+            try
+            {
+                var result = Business.GetPlaylistFile(id, this.HttpContext.Request);
+                if (result != null)
+                    return File(result.Data, "audio/x-mpegurl", result.Playlist.Name, true);
                 return NoContent();
             }
             catch { return BadRequest($"Could not get songs by playlist id."); }

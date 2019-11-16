@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using PlaylistAPI.Models;
+using PlaylistsNET.Content;
+using PlaylistsNET.Models;
 
 namespace PlaylistAPI.Business
 {
@@ -68,6 +71,38 @@ namespace PlaylistAPI.Business
                     }
                 }
                 return completeSongs;
+            }
+            catch { return null; }
+        }
+
+        public PlaylistFile GetPlaylistFile(int id, HttpRequest request)
+        {
+            try
+            {
+                var basePlaylist = base.Get(id);
+                if (basePlaylist == null)
+                    return null;
+
+                MemoryStream playlistStream = new MemoryStream();
+                M3uPlaylist playlist = new M3uPlaylist() { IsExtended = true };
+                var songs = GetSongs(id, request);
+
+                foreach (var song in songs)
+                {
+                    playlist.PlaylistEntries.Add(new M3uPlaylistEntry()
+                    {
+                        Album = song.Properties.Where(item => item.Name == "ALBUM").FirstOrDefault().Value,
+                        AlbumArtist = song.Properties.Where(item => item.Name == "ALBUM_ARTIST").FirstOrDefault().Value,
+                        Path = song.RemoteUrl,
+                        Duration = TimeSpan.FromSeconds(30),
+                        Title = song.Song.Id.ToString()
+                    });
+                }
+                var playlistText = PlaylistToTextHelper.ToText(playlist);
+                var data = Encoding.Default.GetBytes(playlistText);
+                playlistStream.Write(data, 0, data.Length);
+                playlistStream.Seek(0, SeekOrigin.Begin);
+                return new PlaylistFile() { Data = data, Playlist = basePlaylist };
             }
             catch { return null; }
         }

@@ -8,5 +8,6 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1"/>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-rc4"/>
     <PackageReference Include="TagLibSharp" Version="*"/>
+    <PackageReference Include="PlaylistsNET" Version="*"/>
   </ItemGroup>
 </Project>
