@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace PlaylistAPI.Business
                                       Id = property.Id,
                                       Creation = property.Creation,
                                       LastModification = property.LastModification,
+                                      PropertyId = p.Id,
                                       Name = p.Name,
                                       Type = p.Type,
                                       Description = p.Description,
@@ -93,10 +95,88 @@ namespace PlaylistAPI.Business
 
         private bool CheckRule(CompleteSong song, PlaylistRuleCompleteModel rule)
         {
-            var property = song.Properties.Where(item => item.Id == rule.PropertyId).FirstOrDefault();
-            if (property != null && property.Type == rule.PropertyType)
+            try
             {
-                // var propertyValue = 
+                var property = song.Properties.Where(item => item.PropertyId == rule.PropertyId).FirstOrDefault();
+                if (property != null && property.Type == rule.PropertyType)
+                {
+                    switch (rule.PropertyType)
+                    {
+                        case "STRING":
+                            return CompareStrings(property.Value, rule.Data, rule.Operator);
+                        case "DATETIME":
+                            return CompareDatetimes(DateTime.Parse(property.Value), DateTime.Parse(rule.Data), rule.Operator);
+                        case "INTEGER":
+                            return CompareIntegers(int.Parse(property.Value), int.Parse(rule.Data), rule.Operator);
+                        case "BOOLEAN":
+                            return CompareBooleans(bool.Parse(property.Value), bool.Parse(rule.Data), rule.Operator);
+                    }
+                }
+                return false;
+            }
+            catch { return false; }
+        }
+
+        private bool CompareStrings(string a, string b, string op)
+        {
+            switch (op)
+            {
+                case "==":
+                    return a.Equals(b);
+                case "!=":
+                    return !a.Equals(b);
+                case "c":
+                    return a.Contains(b);
+                case "!c":
+                    return !a.Contains(b);
+            }
+            return false;
+        }
+
+        private bool CompareDatetimes(DateTime a, DateTime b, string op)
+        {
+            switch (op)
+            {
+                case "==":
+                    return a.Equals(b);
+                case "!=":
+                    return !a.Equals(b);
+                case "b":
+                    return (b - a).Ticks > 0;
+                case "!b":
+                    return (b - a).Ticks < 0;
+            }
+            return false;
+        }
+
+        private bool CompareIntegers(int a, int b, string op)
+        {
+            switch (op)
+            {
+                case ">":
+                    return a > b;
+                case ">=":
+                    return a >= b;
+                case "<":
+                    return a < b;
+                case "<=":
+                    return a <= b;
+                case "==":
+                    return a.Equals(b);
+                case "!=":
+                    return !a.Equals(b);
+            }
+            return false;
+        }
+
+        private bool CompareBooleans(bool a, bool b, string op)
+        {
+            switch (op)
+            {
+                case "t":
+                    return a;
+                case "!t":
+                    return !a;
             }
             return false;
         }
