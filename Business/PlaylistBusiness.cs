@@ -24,7 +24,7 @@ namespace PlaylistAPI.Business
             return playlistSet.Where(item => item.OwnerID == Id);
         }
 
-        public IEnumerable<CompleteSong> GetSongs(int id, HttpRequest request, int? songId = null)
+        public IEnumerable<CompleteSong> GetSongs(int id, HttpRequest request)
         {
             try
             {
@@ -34,12 +34,12 @@ namespace PlaylistAPI.Business
                 var propertySet = Context.ArquireDbSet<Property>();
 
                 var playlistRules = playlistRuleBusiness.GetPlaylistRules(id).ToList();
-                var models = (from song in songSet where (songId == null || (songId != null && song.Id == songId)) select song).ToList();
+                var models = (from song in songSet select song).ToList();
                 var playlist = base.Get(id);
 
                 var properties = (from property in songPropertySet
                                   join p in propertySet on property.PropertyId equals p.Id
-                                  where ((property.Value != null || p.Type == "SONG" ) && (songId == null || (songId != null && property.SongId == songId)))
+                                  where (property.Value != null || p.Type == "SONG" )
                                   select new CompleteSongProperty
                                   {
                                       Id = property.Id,
@@ -54,13 +54,19 @@ namespace PlaylistAPI.Business
                                   }).ToList();
 
                 List<CompleteSong> completeSongs = new List<CompleteSong>();
+                Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists = new Dictionary<int, IEnumerable<CompleteSong>>();
+
+                foreach (var rule in playlistRules)
+                    if (rule.Operator == "i" || rule.Operator == "!i")
+                        auxiliaryPlaylists.Add(int.Parse(rule.Data), GetSongs(int.Parse(rule.Data), request));
+
                 foreach (var model in models)
                 {
                     if (!File.Exists(model.Url))
                         continue;
 
                     var completeSong = new CompleteSong() { Song = model, Properties = properties.Where(item => item.SongId == model.Id) };
-                    if (IsInPlaylist(playlist, completeSong, playlistRules))
+                    if (IsInPlaylist(playlist, completeSong, playlistRules, auxiliaryPlaylists))
                     {
                         string contentType = new FileExtensionContentTypeProvider().TryGetContentType(model.Url, out contentType) ?
                             contentType : "application/octet-stream";
@@ -109,7 +115,7 @@ namespace PlaylistAPI.Business
             catch { return null; }
         }
 
-        private bool IsInPlaylist(Playlist playlist, CompleteSong song, IEnumerable<PlaylistRuleCompleteModel> playlistRules)
+        private bool IsInPlaylist(Playlist playlist, CompleteSong song, IEnumerable<PlaylistRuleCompleteModel> playlistRules, Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists)
         {
             if (!playlist.IsSmart)
                 return false;
@@ -117,20 +123,20 @@ namespace PlaylistAPI.Business
             if (playlist.DisjunctiveRules)
             {
                 foreach (var rule in playlistRules)
-                    if (CheckRule(song, rule))
+                    if (CheckRule(song, rule, auxiliaryPlaylists))
                         return true; // returns true if ANY rules are satisfied
                 return false;
             }
             else
             {
                 foreach (var rule in playlistRules)
-                    if (!CheckRule(song, rule))
+                    if (!CheckRule(song, rule, auxiliaryPlaylists))
                         return false;
                 return true; // returns true if ALL rules are satisfied
             }
         }
 
-        private bool CheckRule(CompleteSong song, PlaylistRuleCompleteModel rule)
+        private bool CheckRule(CompleteSong song, PlaylistRuleCompleteModel rule, Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists)
         {
             try
             {
@@ -148,18 +154,17 @@ namespace PlaylistAPI.Business
                         case "BOOLEAN":
                             return CompareBooleans(bool.Parse(property.Value), bool.Parse(rule.Data), rule.Operator);
                         case "SONG":
-                            return SongInOrNotIn(song.Song.Id, rule);
+                            return SongInOrNotIn(song.Song.Id, rule, auxiliaryPlaylists);
                     }
                 }
                 return false;
             }
             catch { return false; }
         }
-
-        private bool SongInOrNotIn(int songId, PlaylistRuleCompleteModel rule)
+        
+        private bool SongInOrNotIn(int songId, PlaylistRuleCompleteModel rule, Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists)
         {
-            var songs = GetSongs(int.Parse(rule.Data), null, songId);
-            var contains = songs.Count() > 0;
+            var contains = auxiliaryPlaylists[int.Parse(rule.Data)].Where(item => item.Song.Id == songId).FirstOrDefault() != null;
             return rule.Operator == "i" ? contains : !contains;
         }
 
