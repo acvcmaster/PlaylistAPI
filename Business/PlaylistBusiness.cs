@@ -24,7 +24,7 @@ namespace PlaylistAPI.Business
             return playlistSet.Where(item => item.OwnerID == Id);
         }
 
-        public IEnumerable<CompleteSong> GetSongs(int id, HttpRequest request)
+        public IEnumerable<CompleteSong> GetSongs(int id, HttpRequest request, int? songId = null)
         {
             try
             {
@@ -34,12 +34,12 @@ namespace PlaylistAPI.Business
                 var propertySet = Context.ArquireDbSet<Property>();
 
                 var playlistRules = playlistRuleBusiness.GetPlaylistRules(id).ToList();
-                var models = (from song in songSet select song).ToList();
+                var models = (from song in songSet where (songId == null || (songId != null && song.Id == songId)) select song).ToList();
                 var playlist = base.Get(id);
 
                 var properties = (from property in songPropertySet
                                   join p in propertySet on property.PropertyId equals p.Id
-                                  where property.Value != null
+                                  where ((property.Value != null || p.Type == "SONG" ) && (songId == null || (songId != null && property.SongId == songId)))
                                   select new CompleteSongProperty
                                   {
                                       Id = property.Id,
@@ -66,7 +66,8 @@ namespace PlaylistAPI.Business
                             contentType : "application/octet-stream";
 
                         completeSong.Type = contentType;
-                        completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={model.Id}";
+                        if (request != null)
+                            completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={model.Id}";
                         completeSongs.Add(completeSong);
                     }
                 }
@@ -146,11 +147,20 @@ namespace PlaylistAPI.Business
                             return CompareIntegers(int.Parse(property.Value), int.Parse(rule.Data), rule.Operator);
                         case "BOOLEAN":
                             return CompareBooleans(bool.Parse(property.Value), bool.Parse(rule.Data), rule.Operator);
+                        case "SONG":
+                            return SongInOrNotIn(song.Song.Id, rule);
                     }
                 }
                 return false;
             }
             catch { return false; }
+        }
+
+        private bool SongInOrNotIn(int songId, PlaylistRuleCompleteModel rule)
+        {
+            var songs = GetSongs(int.Parse(rule.Data), null, songId);
+            var contains = songs.Count() > 0;
+            return rule.Operator == "i" ? contains : !contains;
         }
 
         private bool CompareStrings(string a, string b, string op)

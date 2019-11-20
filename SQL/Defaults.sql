@@ -19,6 +19,7 @@ insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (16, 'TRAC
 insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (17, 'YEAR', 'INTEGER', 'Year');
 insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (18, 'LYRICS', 'STRING', 'Lyrics');
 insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (19, 'MIME', 'STRING', 'MIME Type');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (20, 'SONG', 'SONG', 'Song');
 
 
 -- Default values for COMPARATORS
@@ -31,8 +32,8 @@ insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (5, 'equals',
 insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (6, 'not equals', '!=');
 insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (7, 'contains', 'c');
 insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (8, 'does not contain', '!c');
-insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (9, 'in', 'i'); -- In playlist
-insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (10, 'not in', '!i'); -- Not in playlist
+insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (9, 'is in', 'i'); -- In playlist
+insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (10, 'is not in', '!i'); -- Not in playlist
 insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (11, 'is true', 't');
 insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (12, 'is false', '!t');
 insert into "COMPARATORS" ("ID", "DESCRIPTION", "OPERATOR") values (13, 'is before', 'b');
@@ -163,3 +164,7 @@ insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 5);
 insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 6);
 insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 7);
 insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 8);
+
+-- SONG
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (20, 9);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (20, 10);
