@@ -81,6 +81,9 @@ namespace PlaylistAPI.Business
                 case "GENRE":
                     result.Value = file.Tag.FirstGenre;
                     break;
+                case "HAS_ARTWORK":
+                    result.Value = (file.Tag.Pictures.Length > 0).ToString();
+                    break;
                 case "NAME":
                     result.Value = file.Tag.Title != null ? file.Tag.Title : Path.GetFileNameWithoutExtension(file.Name);
                     break;
@@ -92,6 +95,12 @@ namespace PlaylistAPI.Business
                     break;
                 case "YEAR":
                     result.Value = file.Tag.Year.ToString();
+                    break;
+                case "LYRICS":
+                    result.Value = file.Tag.Lyrics;
+                    break;
+                case "MIME":
+                    result.Value = file.MimeType;
                     break;
             }
             return result;

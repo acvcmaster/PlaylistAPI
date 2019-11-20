@@ -39,7 +39,7 @@ namespace PlaylistAPI.Business
 
                 var properties = (from property in songPropertySet
                                   join p in propertySet on property.PropertyId equals p.Id
-                                  orderby property.Id
+                                  where property.Value != null
                                   select new CompleteSongProperty
                                   {
                                       Id = property.Id,
@@ -92,10 +92,10 @@ namespace PlaylistAPI.Business
                 {
                     playlist.PlaylistEntries.Add(new M3uPlaylistEntry()
                     {
-                        Album = song.Properties.Where(item => item.Name == "ALBUM").FirstOrDefault().Value,
-                        AlbumArtist = song.Properties.Where(item => item.Name == "ALBUM_ARTIST").FirstOrDefault().Value,
+                        Album = song.Properties.Where(item => item.Name == "ALBUM").FirstOrDefault()?.Value,
+                        AlbumArtist = song.Properties.Where(item => item.Name == "ALBUM_ARTIST").FirstOrDefault()?.Value,
                         Path = song.RemoteUrl,
-                        Title = $"{playlistSongId} - {song.Properties.Where(item => item.Name == "NAME").FirstOrDefault().Value}"
+                        Title = $"{playlistSongId} - {song.Properties.Where(item => item.Name == "NAME").FirstOrDefault()?.Value}"
                     });
                     playlistSongId++;
                 }

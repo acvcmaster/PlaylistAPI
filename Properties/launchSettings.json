@@ -1,17 +1,9 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:43246",
-      "sslPort": 44359
-    }
-  },
   "profiles": {
     "PlaylistAPI": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "applicationUrl": "http://localhost:22781",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

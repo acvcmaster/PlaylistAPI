@@ -17,6 +17,9 @@ insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (14, 'SAMP
 insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (15, 'SIZE', 'INTEGER', 'File size');
 insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (16, 'TRACK_NUMER', 'INTEGER', 'Track number');
 insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (17, 'YEAR', 'INTEGER', 'Year');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (18, 'LYRICS', 'STRING', 'Lyrics');
+insert into "PROPERTIES" ("ID", "NAME", "TYPE", "DESCRIPTION") values (19, 'MIME', 'STRING', 'MIME Type');
+
 
 -- Default values for COMPARATORS
 
@@ -148,3 +151,15 @@ insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (17, 3);
 insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (17, 4);
 insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (17, 5);
 insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (17, 6);
+
+-- LYRICS
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (18, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (18, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (18, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (18, 8);
+
+-- MIME
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 5);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 6);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 7);
+insert into "RULES" ("PROPERTY_ID", "COMPARATOR_ID") values (19, 8);
