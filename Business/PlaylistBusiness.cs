@@ -108,8 +108,6 @@ namespace PlaylistAPI.Business
                 }
                 var playlistText = PlaylistToTextHelper.ToText(playlist);
                 var data = Encoding.Default.GetBytes(playlistText);
-                playlistStream.Write(data, 0, data.Length);
-                playlistStream.Seek(0, SeekOrigin.Begin);
                 return new PlaylistFile() { Data = data, Playlist = basePlaylist };
             }
             catch { return null; }
