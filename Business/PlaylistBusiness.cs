@@ -45,72 +45,81 @@ namespace PlaylistAPI.Business
                 var songsAndRules = playlist.IsSmart ? (from rule in playlistRules
                                                         join sp in songPropertySet on rule.PropertyId equals sp.PropertyId
                                                         join p in propertySet on sp.PropertyId equals p.Id
-                                                        where (p.Type == rule.PropertyType) && PropertyAccordingToRule(rule.PropertyType, rule.Operator, sp.Value, rule.Data)
+                                                        where (p.Type == rule.PropertyType) && PropertyAccordingToRule(rule.PropertyType, rule.Operator,
+                                                            sp.Value, rule.Data, sp.SongId, auxiliaryPlaylists)
                                                         select new { songId = sp.SongId, ruleId = rule.Id }).ToList() : null;
 
-                Dictionary<int, int> songsAndRulesDict = new Dictionary<int, int>();
-                foreach (var item in songsAndRules)
-                {
-                    if (!songsAndRulesDict.ContainsKey(item.songId))
-                        songsAndRulesDict.Add(item.songId, 0);
-
-                    songsAndRulesDict[item.songId]++;
-                }
-
-                var ids = songsAndRules != null ?
-                (
-                    from item in songsAndRulesDict
-                    where (playlist.DisjunctiveRules && item.Value > 0) || (!playlist.DisjunctiveRules && item.Value == playlistRules.Count)
-                    orderby item.Key
-                    select item.Key
-                ).ToList() : null;
 
                 List<CompleteSong> completeSongs = new List<CompleteSong>();
-                if (ids != null)
+                if (songsAndRules != null)
                 {
-                    var songs = from song in songSet where ids.Contains(song.Id) select song;
-
-                    var properties = (from property in songPropertySet
-                                      join p in propertySet on property.PropertyId equals p.Id
-                                      where ids.Contains(property.SongId)
-                                      select new CompleteSongProperty
-                                      {
-                                          Id = property.Id,
-                                          Creation = property.Creation,
-                                          LastModification = property.LastModification,
-                                          PropertyId = p.Id,
-                                          Name = p.Name,
-                                          Type = p.Type,
-                                          Description = p.Description,
-                                          SongId = property.SongId,
-                                          Value = property.Value
-                                      }).ToList();
-
-                    foreach (var song in songs)
+                    Dictionary<int, int> songsAndRulesDict = new Dictionary<int, int>();
+                    foreach (var item in songsAndRules)
                     {
-                        if (!File.Exists(song.Url))
-                            continue;
-                        
-                        var completeSong = new CompleteSong() { Song = song, Properties = properties.Where(item => item.SongId == song.Id).ToList() };
-                        string contentType = new FileExtensionContentTypeProvider().TryGetContentType(song.Url, out contentType) ?
-                            contentType : "application/octet-stream";
+                        if (!songsAndRulesDict.ContainsKey(item.songId))
+                            songsAndRulesDict.Add(item.songId, 0);
 
-                        completeSong.Type = contentType;
-                        if (request != null)
-                            completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={song.Id}";
-                        completeSongs.Add(completeSong);
+                        songsAndRulesDict[item.songId]++;
                     }
+
+                    var ids = songsAndRules != null ?
+                    (
+                        from item in songsAndRulesDict
+                        where (playlist.DisjunctiveRules && item.Value > 0) || (!playlist.DisjunctiveRules && item.Value == playlistRules.Count)
+                        orderby item.Key
+                        select item.Key
+                    ).ToList() : null;
+
+                    if (ids != null)
+                    {
+                        var songs = from song in songSet where ids.Contains(song.Id) select song;
+
+                        var properties = (from property in songPropertySet
+                                          join p in propertySet on property.PropertyId equals p.Id
+                                          where ids.Contains(property.SongId)
+                                          select new CompleteSongProperty
+                                          {
+                                              Id = property.Id,
+                                              Creation = property.Creation,
+                                              LastModification = property.LastModification,
+                                              PropertyId = p.Id,
+                                              Name = p.Name,
+                                              Type = p.Type,
+                                              Description = p.Description,
+                                              SongId = property.SongId,
+                                              Value = property.Value
+                                          }).ToList();
+
+                        foreach (var song in songs)
+                        {
+                            if (!File.Exists(song.Url))
+                                continue;
+
+                            var completeSong = new CompleteSong() { Song = song, Properties = properties.Where(item => item.SongId == song.Id).ToList() };
+                            string contentType = new FileExtensionContentTypeProvider().TryGetContentType(song.Url, out contentType) ?
+                                contentType : "application/octet-stream";
+
+                            completeSong.Type = contentType;
+                            if (request != null)
+                                completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={song.Id}";
+                            completeSongs.Add(completeSong);
+                        }
+                    }
+                }
+                else
+                {
+                    // TODO: Non-smart playlists
                 }
                 return completeSongs;
             }
             catch { return null; }
         }
 
-        private bool PropertyAccordingToRule(string propertyType, string op, string value, string data)
+        private bool PropertyAccordingToRule(string propertyType, string op, string value, string data, int songId, Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists)
         {
             try
             {
-                if (value != null)
+                if (value != null || propertyType == "SONG")
                 {
                     switch (propertyType)
                     {
@@ -122,6 +131,11 @@ namespace PlaylistAPI.Business
                             return CompareIntegers(int.Parse(value), int.Parse(data), op);
                         case "BOOLEAN":
                             return CompareBooleans(bool.Parse(value), bool.Parse(data), op);
+                        case "SONG":
+                            {
+                                var contains = auxiliaryPlaylists[int.Parse(data)].Where(item => item.Song.Id == songId).FirstOrDefault() != null;
+                                return op == "i" ? contains : !contains;
+                            }
                     }
                 }
                 return false;
@@ -143,15 +157,12 @@ namespace PlaylistAPI.Business
 
                 foreach (var song in songs)
                 {
-                    var artist = song.Properties.Where(item => item.Name == "ARTIST").FirstOrDefault()?.Value;
-                    var album_artist = song.Properties.Where(item => item.Name == "ALBUM_ARTIST").FirstOrDefault()?.Value;
-
                     playlist.PlaylistEntries.Add(new M3uPlaylistEntry()
                     {
                         Album = song.Properties.Where(item => item.Name == "ALBUM").FirstOrDefault()?.Value,
-                        AlbumArtist = album_artist,
+                        AlbumArtist = song.Properties.Where(item => item.Name == "ALBUM_ARTIST").FirstOrDefault()?.Value,
                         Path = song.RemoteUrl,
-                        Title = $"{(artist != null ? artist : album_artist)} - {song.Properties.Where(item => item.Name == "NAME").FirstOrDefault()?.Value}"
+                        Title = $"{song.Properties.Where(item => item.Name == "NAME").FirstOrDefault()?.Value}"
                     });
                 }
                 var playlistText = PlaylistToTextHelper.ToText(playlist);
