@@ -115,34 +115,6 @@ namespace PlaylistAPI.Business
             catch { return null; }
         }
 
-        private bool PropertyAccordingToRule(string propertyType, string op, string value, string data, int songId, Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists)
-        {
-            try
-            {
-                if (value != null || propertyType == "SONG")
-                {
-                    switch (propertyType)
-                    {
-                        case "STRING":
-                            return CompareStrings(value, data, op);
-                        case "DATETIME":
-                            return CompareDatetimes(DateTime.Parse(value), DateTime.Parse(data), op);
-                        case "INTEGER":
-                            return CompareIntegers(int.Parse(value), int.Parse(data), op);
-                        case "BOOLEAN":
-                            return CompareBooleans(bool.Parse(value), bool.Parse(data), op);
-                        case "SONG":
-                            {
-                                var contains = auxiliaryPlaylists[int.Parse(data)].Where(item => item.Song.Id == songId).FirstOrDefault() != null;
-                                return op == "i" ? contains : !contains;
-                            }
-                    }
-                }
-                return false;
-            }
-            catch { return false; }
-        }
-
         public PlaylistFile GetPlaylistFile(int id, HttpRequest request)
         {
             try
@@ -170,6 +142,35 @@ namespace PlaylistAPI.Business
                 return new PlaylistFile() { Data = data, Playlist = basePlaylist };
             }
             catch { return null; }
+        }
+
+#region Helpers
+        private bool PropertyAccordingToRule(string propertyType, string op, string value, string data, int songId, Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists)
+        {
+            try
+            {
+                if (value != null || propertyType == "SONG")
+                {
+                    switch (propertyType)
+                    {
+                        case "STRING":
+                            return CompareStrings(value, data, op);
+                        case "DATETIME":
+                            return CompareDatetimes(DateTime.Parse(value), DateTime.Parse(data), op);
+                        case "INTEGER":
+                            return CompareIntegers(int.Parse(value), int.Parse(data), op);
+                        case "BOOLEAN":
+                            return CompareBooleans(bool.Parse(value), bool.Parse(data), op);
+                        case "SONG":
+                            {
+                                var contains = auxiliaryPlaylists[int.Parse(data)].Where(item => item.Song.Id == songId).FirstOrDefault() != null;
+                                return op == "i" ? contains : !contains;
+                            }
+                    }
+                }
+                return false;
+            }
+            catch { return false; }
         }
 
         private bool CompareStrings(string a, string b, string op)
@@ -235,5 +236,6 @@ namespace PlaylistAPI.Business
             }
             return false;
         }
+        #endregion
     }
 }
