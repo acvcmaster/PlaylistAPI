@@ -1,5 +1,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using PlaylistAPI.Business;
 using PlaylistAPI.Models;
 
@@ -31,6 +32,15 @@ namespace PlaylistAPI.Controllers
             if (result != null)
                 return Ok(result);
             return BadRequest("Failed to mass insert songs (directory exists?).");
+        }
+
+        [HttpGet]
+        public IActionResult GetAll([FromQuery]int page, [FromQuery]int entriesPerPage)
+        {
+            var result = Business.GetAll(page, entriesPerPage, this.HttpContext.Request);
+            if (result != null)
+                return Ok(JsonConvert.SerializeObject(result, Formatting.Indented));
+            return BadRequest("Could not get songs.");
         }
     }
 }

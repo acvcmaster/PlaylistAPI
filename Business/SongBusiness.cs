@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using PlaylistAPI.Models;
 
@@ -46,6 +47,60 @@ namespace PlaylistAPI.Business
                 }
             }
             return null;
+        }
+
+        public IEnumerable<CompleteSong> GetAll(int page, int entriesPerPage, HttpRequest request)
+        {
+            page = page != 0 ? page : 1;
+            entriesPerPage = entriesPerPage != 0 ? entriesPerPage : int.MaxValue;
+            try
+            {
+                var songSet = Context.ArquireDbSet<Song>();
+                var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                var propertySet = Context.ArquireDbSet<Property>();
+                var songs = (from song in songSet orderby song.Id select song)
+                    .Skip(entriesPerPage * (page - 1))
+                    .Take(entriesPerPage)
+                    .ToDictionary(item => item.Id);
+                var songIds = songs.Select(item => item.Key);
+
+                var properties = (from property in songPropertySet
+                                  join p in propertySet on property.PropertyId equals p.Id
+                                  where songIds.Contains(property.SongId)
+                                  select new CompleteSongProperty
+                                  {
+                                      Id = property.Id,
+                                      Creation = property.Creation,
+                                      LastModification = property.LastModification,
+                                      PropertyId = p.Id,
+                                      Name = p.Name,
+                                      Type = p.Type,
+                                      Description = p.Description,
+                                      SongId = property.SongId,
+                                      Value = property.Value
+                                  }).ToList();
+                
+
+                List<CompleteSong> result = new List<CompleteSong>();
+                foreach (var songPair in songs)
+                {
+                    string contentType = new FileExtensionContentTypeProvider().TryGetContentType(songPair.Value.Url, out contentType) ?
+                        contentType : "application/octet-stream";
+
+                    CompleteSong completeSong = new CompleteSong()
+                    {
+                        Song = songPair.Value,
+                        Type = contentType,
+                        Properties = properties.Where(item => item.SongId == songPair.Value.Id)
+                    };
+                    
+                    if (request != null)
+                        completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={songPair.Value.Id}";
+                    result.Add(completeSong);
+                }
+                return result;
+            }
+            catch { return null; }
         }
 
         private SongProperty GetSongProperty(Song song, Property property, TagLib.File file)
