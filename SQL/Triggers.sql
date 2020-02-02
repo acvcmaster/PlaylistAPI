@@ -34,6 +34,9 @@ drop trigger if exists on_create on "COMPARATORS";
 drop trigger if exists on_update on "COMPARATORS";
 drop trigger if exists on_create on "PROPERTIES";
 drop trigger if exists on_update on "PROPERTIES";
+drop trigger if exists on_create on "HARDCODED_ENTRIES";
+drop trigger if exists on_update on "HARDCODED_ENTRIES";
+
 
 create trigger on_create
 before insert on "USERS"
@@ -112,5 +115,15 @@ execute procedure trigger_on_create();
 
 create trigger on_update
 before update on "PROPERTIES"
+for each row
+execute procedure trigger_on_update();
+
+create trigger on_create
+before insert on "HARDCODED_ENTRIES"
+for each row
+execute procedure trigger_on_create();
+
+create trigger on_update
+before update on "HARDCODED_ENTRIES"
 for each row
 execute procedure trigger_on_update();

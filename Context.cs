@@ -15,6 +15,7 @@ namespace PlaylistAPI
         public DbSet<Rule> Rules { get; set; }
         public DbSet<SongProperty> SongProperties { get; set; }
         public DbSet<PlaylistRule> PlaylistRules { get; set; }
+        public DbSet<HardCodedEntry> HardCodedEntries { get; set; }
         public DbSet<TModel> ArquireDbSet<TModel>() where TModel : BaseModel
         {
             var dbSet = (from prop in this.GetType().GetProperties()

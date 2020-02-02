@@ -78,3 +78,11 @@ create table "PLAYLIST_RULES" (
     "RULE_ID" integer not null references "RULES"("ID") on delete cascade,
     "DATA" varchar null
 );
+
+create table "HARDCODED_ENTRIES" (
+	"ID" serial primary key,
+	"CREATION" timestamp not null,
+	"LAST_MODIFICATION" timestamp null,
+    "PLAYLIST_ID" integer not null references "PLAYLISTS"("ID") on delete cascade,
+    "SONG_ID" integer not null references "SONGS"("ID") on delete cascade
+);

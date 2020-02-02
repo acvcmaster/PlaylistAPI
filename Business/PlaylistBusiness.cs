@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using PlaylistAPI.Models;
 using PlaylistsNET.Content;
 using PlaylistsNET.Models;
@@ -32,6 +33,7 @@ namespace PlaylistAPI.Business
                 var songSet = Context.ArquireDbSet<Song>();
                 var songPropertySet = Context.ArquireDbSet<SongProperty>();
                 var propertySet = Context.ArquireDbSet<Property>();
+                var hardCodedEntrySet = Context.ArquireDbSet<HardCodedEntry>();
 
                 var playlistRules = playlistRuleBusiness.GetPlaylistRules(id).ToList();
                 var playlist = base.Get(id);
@@ -50,7 +52,7 @@ namespace PlaylistAPI.Business
                                                         select new { songId = sp.SongId, ruleId = rule.Id }).ToList() : null;
 
 
-                List<CompleteSong> completeSongs = new List<CompleteSong>();
+                List<CompleteSong> completeSongs = null;
                 if (songsAndRules != null)
                 {
                     Dictionary<int, int> songsAndRulesDict = new Dictionary<int, int>();
@@ -71,48 +73,55 @@ namespace PlaylistAPI.Business
                     ).ToList() : null;
 
                     if (ids != null)
-                    {
-                        var songs = from song in songSet where ids.Contains(song.Id) select song;
-
-                        var properties = (from property in songPropertySet
-                                          join p in propertySet on property.PropertyId equals p.Id
-                                          where ids.Contains(property.SongId)
-                                          select new CompleteSongProperty
-                                          {
-                                              Id = property.Id,
-                                              Creation = property.Creation,
-                                              LastModification = property.LastModification,
-                                              PropertyId = p.Id,
-                                              Name = p.Name,
-                                              Type = p.Type,
-                                              Description = p.Description,
-                                              SongId = property.SongId,
-                                              Value = property.Value
-                                          }).ToList();
-
-                        foreach (var song in songs)
-                        {
-                            if (!File.Exists(song.Url))
-                                continue;
-
-                            var completeSong = new CompleteSong() { Song = song, Properties = properties.Where(item => item.SongId == song.Id).ToList() };
-                            string contentType = new FileExtensionContentTypeProvider().TryGetContentType(song.Url, out contentType) ?
-                                contentType : "application/octet-stream";
-
-                            completeSong.Type = contentType;
-                            if (request != null)
-                                completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={song.Id}";
-                            completeSongs.Add(completeSong);
-                        }
-                    }
+                        completeSongs = GetSongsFromIds(request, songSet, songPropertySet, propertySet, ids);
                 }
                 else
                 {
-                    // TODO: Non-smart playlists
+                    var ids = (from e in hardCodedEntrySet where e.PlaylistId == id select e.SongId).Distinct().ToList();
+                    completeSongs = GetSongsFromIds(request, songSet, songPropertySet, propertySet, ids);
                 }
                 return completeSongs;
             }
             catch { return null; }
+        }
+
+        private List<CompleteSong> GetSongsFromIds(HttpRequest request, DbSet<Song> songSet, DbSet<SongProperty> songPropertySet, DbSet<Property> propertySet, List<int> ids)
+        {
+            var completeSongs = new List<CompleteSong>();
+
+            var songs = from song in songSet where ids.Contains(song.Id) select song;
+
+            var properties = (from property in songPropertySet
+                              join p in propertySet on property.PropertyId equals p.Id
+                              where ids.Contains(property.SongId)
+                              select new CompleteSongProperty
+                              {
+                                  Id = property.Id,
+                                  Creation = property.Creation,
+                                  LastModification = property.LastModification,
+                                  PropertyId = p.Id,
+                                  Name = p.Name,
+                                  Type = p.Type,
+                                  Description = p.Description,
+                                  SongId = property.SongId,
+                                  Value = property.Value
+                              }).ToList();
+
+            foreach (var song in songs)
+            {
+                if (!File.Exists(song.Url))
+                    continue;
+
+                var completeSong = new CompleteSong() { Song = song, Properties = properties.Where(item => item.SongId == song.Id).ToList() };
+                string contentType = new FileExtensionContentTypeProvider().TryGetContentType(song.Url, out contentType) ?
+                    contentType : "application/octet-stream";
+
+                completeSong.Type = contentType;
+                if (request != null)
+                    completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={song.Id}";
+                completeSongs.Add(completeSong);
+            }
+            return completeSongs;
         }
 
         public PlaylistFile GetPlaylistFile(int id, HttpRequest request)
