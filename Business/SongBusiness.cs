@@ -110,7 +110,6 @@ namespace PlaylistAPI.Business
                 var song = base.Get(id);
                 if (song != null)
                 {
-                    var songSet = Context.ArquireDbSet<Song>();
                     var songPropertySet = Context.ArquireDbSet<SongProperty>();
                     var propertySet = Context.ArquireDbSet<Property>();
 
