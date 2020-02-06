@@ -3,14 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using PlaylistAPI.Business;
 using PlaylistAPI.Models;
+using PlaylistAPI.Services;
 
 namespace PlaylistAPI.Controllers
 {
     [Route("[controller]/[action]")]
     public class SongController : BaseController<Song, SongBusiness>
     {
-        public SongController(PlaylistContext context) : base(context)
+        public readonly IThumbnailingService thumbnailingService;
+
+        public SongController(PlaylistContext context, IThumbnailingService thumbnailingService) : base(context)
         {
+            this.thumbnailingService = thumbnailingService;
         }
 
         [HttpGet]
@@ -23,6 +27,21 @@ namespace PlaylistAPI.Controllers
                 return File(file.File, file.Type, file.Properties.FirstOrDefault().Value, true);
             }
             return NotFound("Could not get song file by id.");
+        }
+
+        [HttpGet]
+        [Produces("image/jpeg", "application/json")]
+        public IActionResult GetCoverArt([FromQuery]int id)
+        {
+            var song = Business.Get(id);
+            if (song != null) {
+                var result = thumbnailingService.GetThumbnail(song);
+                if (result != null) {
+                    return File(result, "image/jpeg", true);
+                }
+                return NotFound("Could not get cover art by song id.");
+            }
+            return NotFound("Could not get cover art by song id.");
         }
 
         [HttpPost]

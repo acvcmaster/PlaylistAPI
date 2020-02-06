@@ -46,6 +46,7 @@ namespace PlaylistAPI
             });
 
             services.AddSingleton<ICryptographyService, CryptographyService>();
+            services.AddSingleton<IThumbnailingService, FfmpegThumbnailingService>();
             services.AddMvc();
         }
 

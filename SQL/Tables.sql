@@ -8,6 +8,7 @@ drop table if exists "COMPARATORS";
 drop table if exists "SONGS";
 drop table if exists "USERS";
 drop table if exists "PROPERTIES";
+drop table if exists "HARDCODED_ENTRIES"
 -- create all tables
 
 create table "USERS" (
