@@ -103,6 +103,48 @@ namespace PlaylistAPI.Business
             catch { return null; }
         }
 
+        public AmplitudeJSSong GetAmplitudeJSSong(int id, HttpRequest request)
+        {
+            try
+            {
+                var song = base.Get(id);
+                if (song != null)
+                {
+                    var songSet = Context.ArquireDbSet<Song>();
+                    var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                    var propertySet = Context.ArquireDbSet<Property>();
+
+                    var properties = (from property in songPropertySet
+                                      join p in propertySet on property.PropertyId equals p.Id
+                                      where property.SongId == id
+                                      select new CompleteSongProperty
+                                      {
+                                          Id = property.Id,
+                                          Creation = property.Creation,
+                                          LastModification = property.LastModification,
+                                          PropertyId = p.Id,
+                                          Name = p.Name,
+                                          Type = p.Type,
+                                          Description = p.Description,
+                                          SongId = property.SongId,
+                                          Value = property.Value
+                                      }).ToDictionary(item => item.Name);
+
+                    return new AmplitudeJSSong()
+                    {
+                        Name = properties["NAME"].Value,
+                        Artist = properties["ARTIST"].Value,
+                        Album = properties["ALBUM"].Value,
+                        Url = $"{request.Scheme}://{request.Host}/Song/GetFile?id={id}",
+                        Cover_art_url = $"{request.Scheme}://{request.Host}/Song/GetCoverArt?id={id}",
+                        Lyrics = properties["LYRICS"].Value
+                    };
+                }
+                return null;
+            }
+            catch { return null; }
+        }
+
         private SongProperty GetSongProperty(Song song, Property property, TagLib.File file)
         {
             SongProperty result = new SongProperty { SongId = song.Id, PropertyId = property.Id };
