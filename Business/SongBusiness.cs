@@ -119,14 +119,7 @@ namespace PlaylistAPI.Business
                                       where property.SongId == id
                                       select new CompleteSongProperty
                                       {
-                                          Id = property.Id,
-                                          Creation = property.Creation,
-                                          LastModification = property.LastModification,
-                                          PropertyId = p.Id,
                                           Name = p.Name,
-                                          Type = p.Type,
-                                          Description = p.Description,
-                                          SongId = property.SongId,
                                           Value = property.Value
                                       }).ToDictionary(item => item.Name);
 
