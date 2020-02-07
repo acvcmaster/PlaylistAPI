@@ -70,5 +70,14 @@ namespace PlaylistAPI.Controllers
                 return Ok(result);
             return BadRequest("Could not get song by id.");
         }
+
+        [HttpGet]
+        public IActionResult GetAllAmplitudeJSSong([FromQuery]int page, [FromQuery]int entriesPerPage)
+        {
+            var result = Business.GetAllAmplitudeJSSong(page, entriesPerPage, this.HttpContext.Request);
+            if (result != null)
+                return Ok(result);
+            return BadRequest("Could not get songs.");
+        }
     }
 }
