@@ -12,6 +12,8 @@ namespace PlaylistAPI.Controllers
         public PlaylistController(PlaylistContext context) : base(context)
         {
             Business.AddAuxiliraryBusiness<PlaylistRuleBusiness, PlaylistRule>();
+            Business.AddAuxiliraryBusiness<SongBusiness, Song>();
+            Business.AddAuxiliraryBusiness<UserBusiness, User>();
         }
 
         [HttpGet]
@@ -51,6 +53,19 @@ namespace PlaylistAPI.Controllers
                 return NoContent();
             }
             catch { return BadRequest($"Could not get playlist file by playlist id."); }
+        }
+
+        [HttpGet]
+        public IActionResult GetAmplitudeJSPlaylist([FromQuery]int id)
+        {
+            try
+            {
+                var result = Business.GetAmplitudeJSPlaylist(id, this.HttpContext.Request);
+                if (result != null)
+                    return Ok(result);
+                return NoContent();
+            }
+            catch { return BadRequest($"Could not get playlist by id."); }
         }
     }
 }

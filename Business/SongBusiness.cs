@@ -191,6 +191,98 @@ namespace PlaylistAPI.Business
             catch { return null; }
         }
 
+        public List<CompleteSong> GetSongsFromIds(List<int> ids, HttpRequest request)
+        {
+            var songSet = Context.ArquireDbSet<Song>();
+            var songPropertySet = Context.ArquireDbSet<SongProperty>();
+            var propertySet = Context.ArquireDbSet<Property>();
+            var completeSongs = new List<CompleteSong>();
+
+            var songs = from song in songSet where ids.Contains(song.Id) select song;
+
+            var properties = (from property in songPropertySet
+                              join p in propertySet on property.PropertyId equals p.Id
+                              where ids.Contains(property.SongId)
+                              select new CompleteSongProperty
+                              {
+                                  Id = property.Id,
+                                  Creation = property.Creation,
+                                  LastModification = property.LastModification,
+                                  PropertyId = p.Id,
+                                  Name = p.Name,
+                                  Type = p.Type,
+                                  Description = p.Description,
+                                  SongId = property.SongId,
+                                  Value = property.Value
+                              }).ToList();
+
+            foreach (var song in songs)
+            {
+                if (!File.Exists(song.Url))
+                    continue;
+
+                var completeSong = new CompleteSong() { Song = song, Properties = properties.Where(item => item.SongId == song.Id).ToList() };
+                string contentType = new FileExtensionContentTypeProvider().TryGetContentType(song.Url, out contentType) ?
+                    contentType : "application/octet-stream";
+
+                completeSong.Type = contentType;
+                if (request != null)
+                    completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={song.Id}";
+                completeSongs.Add(completeSong);
+            }
+            return completeSongs;
+        }
+
+        public IEnumerable<AmplitudeJSSong> GetAmplitudeJSSongsFromIds(IEnumerable<int> ids, HttpRequest request)
+        {
+            try
+            {
+                var songSet = Context.ArquireDbSet<Song>();
+                var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                var propertySet = Context.ArquireDbSet<Property>();
+                var songs = (from song in songSet where ids.Contains(song.Id) orderby song.Id select song)
+                    .ToDictionary(item => item.Id);
+                var songIds = songs.Select(item => item.Key);
+
+                var properties = (from property in songPropertySet
+                                  join p in propertySet on property.PropertyId equals p.Id
+                                  where songIds.Contains(property.SongId)
+                                  orderby property.SongId
+                                  select new CompleteSongProperty
+                                  {
+                                      Name = p.Name,
+                                      SongId = property.SongId,
+                                      Value = property.Value
+                                  }).ToList();
+
+                Dictionary<int, CompleteSong> songsById = new Dictionary<int, CompleteSong>();
+                foreach (var property in properties)
+                {
+                    if (!songsById.ContainsKey(property.SongId))
+                        songsById.Add(property.SongId, new CompleteSong() { Properties = new List<CompleteSongProperty>() { new CompleteSongProperty() { Name = "ID", Value = property.SongId.ToString() } } });
+
+                    songsById[property.SongId].Properties = songsById[property.SongId].Properties.Append(property);
+                }
+
+                List<Dictionary<string, CompleteSongProperty>> listPropertiesByName = new List<Dictionary<string, CompleteSongProperty>>();
+                foreach (var song in songsById)
+                    listPropertiesByName.Add(song.Value.Properties.ToDictionary(item => item.Name));
+
+                return listPropertiesByName.Select(entry => {
+                    return new AmplitudeJSSong()
+                    {
+                        Name = entry["NAME"].Value,
+                        Artist = entry["ARTIST"].Value,
+                        Album = entry["ALBUM"].Value,
+                        Url = $"{request.Scheme}://{request.Host}/Song/GetFile?id={entry["ID"].Value}",
+                        Cover_art_url = $"{request.Scheme}://{request.Host}/Song/GetCoverArt?id={entry["ID"].Value}",
+                        Lyrics = entry["LYRICS"].Value
+                    };
+                });
+            }
+            catch { return null; }
+        }
+
         private SongProperty GetSongProperty(Song song, Property property, TagLib.File file)
         {
             SongProperty result = new SongProperty { SongId = song.Id, PropertyId = property.Id };

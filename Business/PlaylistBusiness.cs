@@ -25,11 +25,67 @@ namespace PlaylistAPI.Business
             return playlistSet.Where(item => item.OwnerID == Id);
         }
 
+        public IEnumerable<int> GetSongIds(int id, HttpRequest request)
+        {
+            try
+            {
+                PlaylistRuleBusiness playlistRuleBusiness = GetAuxiliraryBusiness<PlaylistRuleBusiness, PlaylistRule>();
+                var songBusiness = GetAuxiliraryBusiness<SongBusiness, Song>();
+                var songSet = Context.ArquireDbSet<Song>();
+                var songPropertySet = Context.ArquireDbSet<SongProperty>();
+                var propertySet = Context.ArquireDbSet<Property>();
+                var hardCodedEntrySet = Context.ArquireDbSet<HardCodedEntry>();
+
+                var playlistRules = playlistRuleBusiness.GetPlaylistRules(id).ToList();
+                var playlist = base.Get(id);
+
+                Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists = new Dictionary<int, IEnumerable<CompleteSong>>();
+
+                foreach (var rule in playlistRules)
+                    if (rule.Operator == "i" || rule.Operator == "!i")
+                        auxiliaryPlaylists.Add(int.Parse(rule.Data), GetSongs(int.Parse(rule.Data), request));
+
+                var songsAndRules = playlist.IsSmart ? (from rule in playlistRules
+                                                        join sp in songPropertySet on rule.PropertyId equals sp.PropertyId
+                                                        join p in propertySet on sp.PropertyId equals p.Id
+                                                        where (p.Type == rule.PropertyType) && PropertyAccordingToRule(rule.PropertyType, rule.Operator,
+                                                            sp.Value, rule.Data, sp.SongId, auxiliaryPlaylists)
+                                                        select new { songId = sp.SongId, ruleId = rule.Id }).ToList() : null;
+
+
+                if (songsAndRules != null)
+                {
+                    Dictionary<int, int> songsAndRulesDict = new Dictionary<int, int>();
+                    foreach (var item in songsAndRules)
+                    {
+                        if (!songsAndRulesDict.ContainsKey(item.songId))
+                            songsAndRulesDict.Add(item.songId, 0);
+
+                        songsAndRulesDict[item.songId]++;
+                    }
+
+                    var ids = songsAndRules != null ?
+                    (
+                        from item in songsAndRulesDict
+                        where (playlist.DisjunctiveRules && item.Value > 0) || (!playlist.DisjunctiveRules && item.Value == playlistRules.Count)
+                        orderby item.Key
+                        select item.Key
+                    ).ToList() : null;
+
+                    return ids;
+                }
+                else
+                    return (from e in hardCodedEntrySet where e.PlaylistId == id select e.SongId).Distinct().ToList();
+            }
+            catch { return null; }
+        }
+
         public IEnumerable<CompleteSong> GetSongs(int id, HttpRequest request)
         {
             try
             {
                 PlaylistRuleBusiness playlistRuleBusiness = GetAuxiliraryBusiness<PlaylistRuleBusiness, PlaylistRule>();
+                var songBusiness = GetAuxiliraryBusiness<SongBusiness, Song>();
                 var songSet = Context.ArquireDbSet<Song>();
                 var songPropertySet = Context.ArquireDbSet<SongProperty>();
                 var propertySet = Context.ArquireDbSet<Property>();
@@ -73,55 +129,16 @@ namespace PlaylistAPI.Business
                     ).ToList() : null;
 
                     if (ids != null)
-                        completeSongs = GetSongsFromIds(request, songSet, songPropertySet, propertySet, ids);
+                        completeSongs = songBusiness.GetSongsFromIds(ids, request);
                 }
                 else
                 {
                     var ids = (from e in hardCodedEntrySet where e.PlaylistId == id select e.SongId).Distinct().ToList();
-                    completeSongs = GetSongsFromIds(request, songSet, songPropertySet, propertySet, ids);
+                    completeSongs = songBusiness.GetSongsFromIds(ids, request);
                 }
                 return completeSongs;
             }
             catch { return null; }
-        }
-
-        private List<CompleteSong> GetSongsFromIds(HttpRequest request, DbSet<Song> songSet, DbSet<SongProperty> songPropertySet, DbSet<Property> propertySet, List<int> ids)
-        {
-            var completeSongs = new List<CompleteSong>();
-
-            var songs = from song in songSet where ids.Contains(song.Id) select song;
-
-            var properties = (from property in songPropertySet
-                              join p in propertySet on property.PropertyId equals p.Id
-                              where ids.Contains(property.SongId)
-                              select new CompleteSongProperty
-                              {
-                                  Id = property.Id,
-                                  Creation = property.Creation,
-                                  LastModification = property.LastModification,
-                                  PropertyId = p.Id,
-                                  Name = p.Name,
-                                  Type = p.Type,
-                                  Description = p.Description,
-                                  SongId = property.SongId,
-                                  Value = property.Value
-                              }).ToList();
-
-            foreach (var song in songs)
-            {
-                if (!File.Exists(song.Url))
-                    continue;
-
-                var completeSong = new CompleteSong() { Song = song, Properties = properties.Where(item => item.SongId == song.Id).ToList() };
-                string contentType = new FileExtensionContentTypeProvider().TryGetContentType(song.Url, out contentType) ?
-                    contentType : "application/octet-stream";
-
-                completeSong.Type = contentType;
-                if (request != null)
-                    completeSong.RemoteUrl = $"{request.Scheme}://{request.Host}/Song/GetFile?id={song.Id}";
-                completeSongs.Add(completeSong);
-            }
-            return completeSongs;
         }
 
         public PlaylistFile GetPlaylistFile(int id, HttpRequest request)
@@ -153,7 +170,23 @@ namespace PlaylistAPI.Business
             catch { return null; }
         }
 
-#region Helpers
+        public AmplitudeJSPlaylist GetAmplitudeJSPlaylist(int id, HttpRequest request)
+        {
+            try
+            {
+                var songBusiness = GetAuxiliraryBusiness<SongBusiness, Song>();
+                var userBusiness = GetAuxiliraryBusiness<UserBusiness, User>();
+
+                var playlist = base.Get(id);
+                var ids = GetSongIds(id, request);
+                var songs = songBusiness.GetAmplitudeJSSongsFromIds(ids, request);
+                var author = userBusiness.Get(playlist.OwnerID);
+                return new AmplitudeJSPlaylist() { Author = author.Name, Title = playlist.Name, Songs = songs };
+            }
+            catch { return null; }
+        }
+
+        #region Helpers
         private bool PropertyAccordingToRule(string propertyType, string op, string value, string data, int songId, Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists)
         {
             try
