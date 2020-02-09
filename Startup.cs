@@ -67,14 +67,14 @@ namespace PlaylistAPI
 
             app.UseRouting();
 
+            app.UseCors("_all");
+    
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
-            app.UseCors("_all");
         }
     }
 }
