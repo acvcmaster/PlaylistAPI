@@ -30,9 +30,9 @@ namespace PlaylistAPI
         {
             services.AddCors((options) =>
             {
-                options.AddPolicy("allow-all", (builder) =>
+                options.AddPolicy("_all", (builder) =>
                 {
-                    builder.WithOrigins("*");
+                    builder.AllowAnyOrigin();
                 });
             });
 
@@ -74,7 +74,7 @@ namespace PlaylistAPI
                 endpoints.MapControllers();
             });
 
-            app.UseCors("allow-all");
+            app.UseCors("_all");
         }
     }
 }
