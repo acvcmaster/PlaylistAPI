@@ -67,5 +67,18 @@ namespace PlaylistAPI.Controllers
             }
             catch { return BadRequest($"Could not get playlist by id."); }
         }
+
+        [HttpGet]
+        public IActionResult GetAllAmplitudeJSPlaylist()
+        {
+            try
+            {
+                var result = Business.GetAllAmplitudeJSPlaylist(this.HttpContext.Request);
+                if (result != null)
+                    return Ok(result);
+                return NoContent();
+            }
+            catch { return BadRequest($"Could not get playlists."); }
+        }
     }
 }

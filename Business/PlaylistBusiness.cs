@@ -25,6 +25,12 @@ namespace PlaylistAPI.Business
             return playlistSet.Where(item => item.OwnerID == Id);
         }
 
+        public IEnumerable<Playlist> GetAll()
+        {
+            var playlistSet = Context.ArquireDbSet<Playlist>();
+            return playlistSet.ToList();
+        }
+
         public IEnumerable<int> GetSongIds(int id, HttpRequest request)
         {
             try
@@ -184,6 +190,21 @@ namespace PlaylistAPI.Business
                 return new AmplitudeJSPlaylist() { Author = author.Name, Title = playlist.Name, Songs = songs };
             }
             catch { return null; }
+        }
+
+        public IEnumerable<AmplitudeJSPlaylist> GetAllAmplitudeJSPlaylist(HttpRequest request)
+        {
+            var songBusiness = GetAuxiliraryBusiness<SongBusiness, Song>();
+            var userBusiness = GetAuxiliraryBusiness<UserBusiness, User>();
+
+            var playlists = GetAll();
+            foreach (var playlist in playlists)
+            {
+                var ids = GetSongIds(playlist.Id, request);
+                var songs = songBusiness.GetAmplitudeJSSongsFromIds(ids, request);
+                var author = userBusiness.Get(playlist.OwnerID);
+                yield return new AmplitudeJSPlaylist() { Author = author.Name, Title = playlist.Name, Songs = songs };
+            }
         }
 
         #region Helpers
