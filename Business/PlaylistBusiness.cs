@@ -48,7 +48,7 @@ namespace PlaylistAPI.Business
                 Dictionary<int, IEnumerable<CompleteSong>> auxiliaryPlaylists = new Dictionary<int, IEnumerable<CompleteSong>>();
 
                 foreach (var rule in playlistRules)
-                    if (rule.Operator == "i" || rule.Operator == "!i")
+                    if (rule.PropertyType == "PLAYLIST")
                         auxiliaryPlaylists.Add(int.Parse(rule.Data), GetSongs(int.Parse(rule.Data), request));
 
                 var songsAndRules = playlist.IsSmart ? (from rule in playlistRules
@@ -212,7 +212,7 @@ namespace PlaylistAPI.Business
         {
             try
             {
-                if (value != null || propertyType == "SONG")
+                if (value != null || propertyType == "PLAYLIST")
                 {
                     switch (propertyType)
                     {
@@ -224,10 +224,10 @@ namespace PlaylistAPI.Business
                             return CompareIntegers(int.Parse(value), int.Parse(data), op);
                         case "BOOLEAN":
                             return CompareBooleans(bool.Parse(value), bool.Parse(data), op);
-                        case "SONG":
+                        case "PLAYLIST":
                             {
                                 var contains = auxiliaryPlaylists[int.Parse(data)].Where(item => item.Song.Id == songId).FirstOrDefault() != null;
-                                return op == "i" ? contains : !contains;
+                                return op == "==" ? contains : !contains;
                             }
                     }
                 }

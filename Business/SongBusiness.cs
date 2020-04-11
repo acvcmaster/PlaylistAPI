@@ -316,6 +316,9 @@ namespace PlaylistAPI.Business
                 case "GENRE":
                     result.Value = file.Tag.FirstGenre;
                     break;
+                case "GROUPING":
+                    result.Value = file.Tag.Grouping;
+                    break;
                 case "HAS_ARTWORK":
                     result.Value = (file.Tag.Pictures.Length > 0).ToString();
                     break;
@@ -380,7 +383,7 @@ namespace PlaylistAPI.Business
             if (Directory.Exists(directoryUrl))
             {
                 List<Song> insertedSongs = new List<Song>();
-                var files = Directory.GetFiles(directoryUrl);
+                var files = Directory.GetFiles(directoryUrl, "*", SearchOption.AllDirectories);
                 foreach (var file in files)
                 {
                     Song song = new Song() { Url = file };
